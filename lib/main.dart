@@ -32,6 +32,6 @@ ThemeData buildUnsplashGalleryTheme() {
 void main() {
   runApp(MaterialApp(
     theme: _unsplashGalleryTheme,
-    home: Gallery(),
+    home: ImageList(),
   ));
 }

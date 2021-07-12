@@ -1,20 +1,21 @@
 import 'dart:async';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:unsplash_gallery/models/image_list_model.dart';
 import 'package:unsplash_gallery/utilities/image_list_loader.dart';
 
-class Gallery extends StatefulWidget {
-  const Gallery({Key? key}) : super(key: key);
+import 'image_viewer.dart';
+
+class ImageList extends StatefulWidget {
+  const ImageList({Key? key}) : super(key: key);
 
   @override
-  _GalleryState createState() => _GalleryState();
+  _ImageListState createState() => _ImageListState();
 }
 
-class _GalleryState extends State<Gallery> {
-  late Future<ImageList> list;
+class _ImageListState extends State<ImageList> {
+  late Future<ImageListModel> list;
 
   @override
   void initState() {
@@ -47,8 +48,7 @@ class _GalleryState extends State<Gallery> {
           child: Container(
             child: FutureBuilder(
                 future: list,
-                builder: (context, AsyncSnapshot<ImageList> snapshot) {
-
+                builder: (context, AsyncSnapshot<ImageListModel> snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.none:
                     case ConnectionState.waiting:
@@ -58,30 +58,33 @@ class _GalleryState extends State<Gallery> {
                         return Center(
                             child: Column(
                           children: [
-
-                                // Icon(
-                                //   Icons.error,
-                                //   color: Colors.red,
-                                // ),
-                                // Text(
-                                //   'Error: ${snapshot.error}',
-                                //   style: TextStyle(color: Colors.red),
-                                // ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 16.0, left: 16.0, right: 16.0, bottom: 8.0),
-                                  child: RichText(
-                                      text: TextSpan(children: [
-                                    WidgetSpan(
-                                      child: Icon(
-                                        Icons.error,
-                                        color: Colors.red,
-                                      ),
-                                    ),
-                                    TextSpan(text: 'Error: ${snapshot.error}', style: TextStyle(
-                                      color: Colors.red
-                                    )),
-                                  ])),
+                            // Icon(
+                            //   Icons.error,
+                            //   color: Colors.red,
+                            // ),
+                            // Text(
+                            //   'Error: ${snapshot.error}',
+                            //   style: TextStyle(color: Colors.red),
+                            // ),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 16.0,
+                                  left: 16.0,
+                                  right: 16.0,
+                                  bottom: 8.0),
+                              child: RichText(
+                                  text: TextSpan(children: [
+                                WidgetSpan(
+                                  child: Icon(
+                                    Icons.error,
+                                    color: Colors.red,
+                                  ),
                                 ),
+                                TextSpan(
+                                    text: 'Error: ${snapshot.error}',
+                                    style: TextStyle(color: Colors.red)),
+                              ])),
+                            ),
 
                             ElevatedButton(
                               onPressed: () {
@@ -95,7 +98,8 @@ class _GalleryState extends State<Gallery> {
                           ],
                         ));
                       else {
-                        return createListView(snapshot.data!.posts, context, snapshot);
+                        return createListView(
+                            snapshot.data!.posts, context, snapshot);
                       }
                   }
                   // if (snapshot.hasData) {
@@ -140,7 +144,6 @@ Widget createListView(
                   title: Text(list[index].name),
                   subtitle: Text(list[index].author),
                   leading: Image.network(
-                    //TODO: change to cached image
                     list[index].thumbnail,
                     width: 80,
                     fit: BoxFit.cover,
@@ -152,44 +155,4 @@ Widget createListView(
           ),
         );
       });
-}
-
-class ImageViewer extends StatelessWidget {
-  final String imageUrl;
-
-  const ImageViewer({Key? key, required this.imageUrl}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Fullscreen',
-        ),
-      ),
-      backgroundColor: Colors.black45,
-      body: Center(
-        child: CachedNetworkImage(
-          imageUrl: imageUrl,
-          fit: BoxFit.contain,
-          placeholder: (context, imageUrl) =>
-              Center(child: CircularProgressIndicator()),
-          errorWidget: (context, imageUrl, error) => Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.error,
-                color: Colors.red,
-              ),
-              Text(
-                'Failed to Load image',
-                style: TextStyle(color: Colors.red),
-              )
-            ],
-          )),
-        ),
-      ),
-    );
-  }
 }

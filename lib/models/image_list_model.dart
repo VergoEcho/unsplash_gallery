@@ -1,12 +1,12 @@
-class ImageList {
+class ImageListModel {
   final List<ImagePost> posts;
 
-  ImageList({required this.posts});
+  ImageListModel({required this.posts});
 
-  factory ImageList.fromJson(List<dynamic> parsedJson) {
+  factory ImageListModel.fromJson(List<dynamic> parsedJson) {
     List<ImagePost> posts = parsedJson.map((post) => ImagePost.fromJson(post))
         .toList();
-    return ImageList(posts: posts);
+    return ImageListModel(posts: posts);
   }
 }
 
